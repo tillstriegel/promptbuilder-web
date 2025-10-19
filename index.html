@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PromptBuilder Web - OpenRouter AI Assistant</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="nav-bar">
+        <div class="nav-left">
+            <h1 class="nav-title">PromptBuilder Web</h1>
+            <div class="nav-controls">
+                <div class="custom-dropdown" id="modelDropdown">
+                    <div class="dropdown-trigger">
+                        <input type="text" id="modelSearch" class="form-control nav-select" placeholder="Search models..." readonly>
+                        <span class="dropdown-arrow">▼</span>
+                    </div>
+                    <div class="dropdown-menu" id="modelMenu">
+                        <!-- Models will be populated here -->
+                    </div>
+                </div>
+                <button id="refreshModels" class="btn btn--secondary nav-btn">🔄</button>
+            </div>
+        </div>
+        <div class="nav-right">
+        <button id="themeToggle" class="btn btn--secondary nav-btn" title="Toggle theme">☀️</button>
+        <button id="settingsBtn" class="btn btn--secondary nav-btn">⚙️ Settings</button>
+        <div class="token-display">
+            <span id="tokenCount">Tokens: 0</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Left Sidebar - File Tree -->
+        <aside class="sidebar sidebar--left">
+            <div class="sidebar-header">
+                <h3>Files</h3>
+                <div class="file-controls">
+                    <button id="selectAllFiles" class="btn btn--sm btn--secondary">Select All</button>
+                    <button id="clearFiles" class="btn btn--sm btn--secondary">Clear</button>
+                </div>
+            </div>
+            
+            <!-- File Upload Zone -->
+            <div class="file-upload-zone" id="fileUploadZone">
+                <div class="upload-content">
+                    <div class="upload-icon">📁</div>
+                    <p>Drop files or folders here</p>
+                    <p class="upload-subtitle">or click to browse</p>
+                    <input type="file" id="fileInput" multiple webkitdirectory="true" hidden>
+                    <input type="file" id="singleFileInput" multiple hidden>
+                    <button id="browseFiles" class="btn btn--primary btn--sm">Browse Files</button>
+                    <button id="browseFolders" class="btn btn--secondary btn--sm">Browse Folders</button>
+                    <button id="linkLiveFolder" class="btn btn--secondary btn--sm" title="Read files fresh at prompt time">🔗 Link Live Folder</button>
+                </div>
+            </div>
+
+            <!-- File Tree -->
+            <div class="file-tree" id="fileTree"></div>
+
+            <!-- Context Builder -->
+            <div class="context-builder">
+                <h4>AI Context Builder</h4>
+                <textarea id="taskDescription" class="form-control" placeholder="Describe your task to get AI-suggested relevant files..."></textarea>
+                <button id="suggestFiles" class="btn btn--primary btn--sm btn--full-width">🤖 Suggest Files</button>
+            </div>
+        </aside>
+
+        <!-- Center Panel - Content Preview & Prompt -->
+        <main class="main-content">
+            <div class="content-tabs">
+                <button class="tab-btn active" data-tab="preview">File Preview</button>
+                <button class="tab-btn" data-tab="prompt">Generated Prompt</button>
+                <button class="tab-btn" data-tab="response">AI Response</button>
+            </div>
+
+            <!-- File Preview Tab -->
+            <div class="tab-content active" id="previewTab">
+                <div class="file-preview">
+                    <div class="preview-header">
+                        <span id="previewFileName">Select a file to preview</span>
+                        <div class="preview-controls">
+                            <select id="syntaxHighlight" class="form-control">
+                                <option value="text">Plain Text</option>
+                                <option value="javascript">JavaScript</option>
+                                <option value="python">Python</option>
+                                <option value="css">CSS</option>
+                                <option value="html">HTML</option>
+                                <option value="json">JSON</option>
+                                <option value="markdown">Markdown</option>
+                            </select>
+                        </div>
+                    </div>
+                    <pre id="fileContent" class="file-content">No file selected</pre>
+                </div>
+            </div>
+
+            <!-- Generated Prompt Tab -->
+            <div class="tab-content" id="promptTab">
+                <div class="prompt-composer">
+                    <div class="prompt-header">
+                        <h3>Generated Prompt</h3>
+                        <div class="prompt-controls">
+                            <select id="promptTemplate" class="form-control">
+                                <option value="">Custom Prompt</option>
+                                <option value="code-review">Code Review</option>
+                                <option value="feature-implementation">Feature Implementation</option>
+                                <option value="bug-fix">Bug Fix</option>
+                            </select>
+                            <button id="generatePrompt" class="btn btn--primary">Generate Prompt</button>
+                            <button id="copyPrompt" class="btn btn--secondary">📋 Copy</button>
+                        </div>
+                    </div>
+                    <textarea id="taskInput" class="form-control task-input" placeholder="Describe what you want the AI to do with the selected files..."></textarea>
+                    <pre id="generatedPrompt" class="generated-prompt">Select files and describe your task to generate a prompt...</pre>
+                </div>
+            </div>
+
+            <!-- AI Response Tab -->
+            <div class="tab-content" id="responseTab">
+                <div class="response-container">
+                    <div class="response-header">
+                        <h3>AI Response</h3>
+                        <div class="response-controls">
+                            <button id="sendPrompt" class="btn btn--primary">🚀 Send to AI</button>
+                            <button id="stopGeneration" class="btn btn--secondary" style="display: none;">⏹️ Stop</button>
+                            <button id="copyResponse" class="btn btn--secondary">📋 Copy Response</button>
+                        </div>
+                    </div>
+                    <div class="response-content">
+                        <div id="responseOutput" class="response-output">Click "Send to AI" to get a response...</div>
+                        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+                            <div class="loading-spinner"></div>
+                            <span>Generating response...</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Apply Changes Section -->
+                    <div id="applySection" class="apply-section" style="display: none;">
+                        <h4>Apply Changes</h4>
+                        <div id="changesPreview" class="changes-preview"></div>
+                        <div class="apply-controls">
+                            <button id="applyAllChanges" class="btn btn--primary">✅ Apply All</button>
+                            <button id="rejectAllChanges" class="btn btn--secondary">❌ Reject All</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Sidebar - Model Info & Settings -->
+        <aside class="sidebar sidebar--right">
+            <div class="sidebar-section">
+                <h3>Model Information</h3>
+                <div id="modelInfo" class="model-info">
+                    <p class="text-secondary">Select a model to view details</p>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Token Usage</h3>
+                <div class="token-breakdown">
+                    <div class="token-item">
+                        <span>Selected Files:</span>
+                        <span id="fileTokens">0</span>
+                    </div>
+                    <div class="token-item">
+                        <span>Prompt:</span>
+                        <span id="promptTokens">0</span>
+                    </div>
+                    <div class="token-item total">
+                        <span>Total:</span>
+                        <span id="totalTokens">0</span>
+                    </div>
+                    <div class="cost-estimate">
+                        <span>Estimated Cost:</span>
+                        <span id="estimatedCost">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Project</h3>
+                <div class="project-controls">
+                    <button id="saveProject" class="btn btn--secondary btn--full-width">💾 Save Project</button>
+                    <button id="loadProject" class="btn btn--secondary btn--full-width">📂 Load Project</button>
+                    <button id="exportPrompt" class="btn btn--secondary btn--full-width">📤 Export Prompt</button>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Shortcuts</h3>
+                <div class="shortcuts-list">
+                    <div class="shortcut-item"><kbd>Ctrl+O</kbd> Open files</div>
+                    <div class="shortcut-item"><kbd>Ctrl+S</kbd> Save project</div>
+                    <div class="shortcut-item"><kbd>Ctrl+Enter</kbd> Send prompt</div>
+                    <div class="shortcut-item"><kbd>Ctrl+A</kbd> Select all files</div>
+                    <div class="shortcut-item"><kbd>Esc</kbd> Close modal</div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="modal-close" id="closeSettings">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="apiKey">OpenRouter API Key</label>
+                    <input type="password" id="apiKey" class="form-control" placeholder="Enter your OpenRouter API key">
+                    <small class="form-help">Your API key is stored locally and never sent to our servers.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="maxTokens">Max Response Tokens</label>
+                    <input type="number" id="maxTokens" class="form-control" value="4000" min="100" max="32000">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="temperature">Temperature</label>
+                    <input type="range" id="temperature" class="form-control" min="0" max="2" step="0.1" value="0.7">
+                    <span id="temperatureValue" class="range-value">0.7</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="streamResponse"> Stream responses in real-time
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="saveSettings" class="btn btn--primary">Save Settings</button>
+                <button id="cancelSettings" class="btn btn--secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Input for Loading Projects -->
+    <input type="file" id="projectFileInput" accept=".json" hidden>
+
+    <script src="app.js"></script>
+</body>
+</html>
