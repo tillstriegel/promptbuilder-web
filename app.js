@@ -1,50 +1,48 @@
 // Theme definitions
 const themes = {
     light: {
-        '--color-background': '#ffffff',
-        '--color-surface': '#f8f8f8',
-        '--color-text': '#133252',
-        '--color-text-secondary': '#62686d',
-        '--color-primary': '#3b82f6',
-        '--color-primary-hover': '#2563eb',
-        '--color-primary-active': '#1d4ed8',
-        '--color-secondary': 'rgba(94, 82, 64, 0.12)',
-        '--color-secondary-hover': 'rgba(94, 82, 64, 0.2)',
-        '--color-secondary-active': 'rgba(94, 82, 64, 0.25)',
-        '--color-border': 'rgba(94, 82, 64, 0.2)',
-        '--color-error': '#c0152f',
-        '--color-success': '#21c084',
-        '--color-warning': '#a8752f',
-        '--color-info': '#62686d',
-        '--color-focus-ring': 'rgba(59, 130, 246, 0.4)',
-        '--color-btn-primary-text': '#ffffff',
-        '--color-card-border': 'rgba(94, 82, 64, 0.12)',
-        '--color-card-border-inner': 'rgba(94, 82, 64, 0.12)',
-        '--color-select-caret': 'rgba(19, 52, 59, 0.8)',
-        '--shadow-inset-sm': 'inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -1px 0 rgba(0, 0, 0, 0.03)'
+        '--color-background': '#f2f5f8',
+        '--color-surface': '#ffffff',
+        '--color-surface-alt': '#f7fafc',
+        '--color-text': '#0f172a',
+        '--color-text-secondary': '#475569',
+        '--color-primary': '#00634f',
+        '--color-primary-hover': '#004f3f',
+        '--color-primary-active': '#003d32',
+        '--color-secondary': 'rgba(0, 99, 79, 0.1)',
+        '--color-secondary-hover': 'rgba(0, 99, 79, 0.18)',
+        '--color-secondary-active': 'rgba(0, 99, 79, 0.26)',
+        '--color-border': '#d0d5dd',
+        '--color-border-bright': '#b7c0cd',
+        '--color-error': '#d03039',
+        '--color-success': '#0c8c62',
+        '--color-warning': '#d6911f',
+        '--color-info': '#0f5ba7',
+        '--color-focus-ring': 'rgba(0, 118, 94, 0.35)',
+        '--color-btn-primary-text': '#f2f5f8',
+        '--shadow-outline': '0 0 0 1px rgba(15, 23, 42, 0.08)'
     },
     dark: {
-        '--color-background': '#1a1a1a',
-        '--color-surface': '#2a2a2a',
-        '--color-text': '#f5f5f5',
-        '--color-text-secondary': 'rgba(167, 169, 169, 0.7)',
-        '--color-primary': '#ef4444',
-        '--color-primary-hover': '#dc2626',
-        '--color-primary-active': '#b91c1c',
-        '--color-secondary': 'rgba(119, 124, 124, 0.15)',
-        '--color-secondary-hover': 'rgba(119, 124, 124, 0.25)',
-        '--color-secondary-active': 'rgba(119, 124, 124, 0.3)',
-        '--color-border': 'rgba(119, 124, 124, 0.3)',
-        '--color-error': '#ff5461',
-        '--color-success': '#32c6c6',
-        '--color-warning': '#e6a161',
-        '--color-info': '#a7a9a9',
-        '--color-focus-ring': 'rgba(239, 68, 68, 0.4)',
-        '--color-btn-primary-text': '#133252',
-        '--color-card-border': 'rgba(119, 124, 124, 0.2)',
-        '--color-card-border-inner': 'rgba(119, 124, 124, 0.15)',
-        '--color-select-caret': 'rgba(245, 245, 245, 0.8)',
-        '--shadow-inset-sm': 'inset 0 1px 0 rgba(255, 255, 255, 0.1), inset 0 -1px 0 rgba(0, 0, 0, 0.15)'
+        '--color-background': '#050608',
+        '--color-surface': '#0f1219',
+        '--color-surface-alt': '#161b24',
+        '--color-text': '#e8f0ff',
+        '--color-text-secondary': '#8e9bad',
+        '--color-primary': '#6af5b6',
+        '--color-primary-hover': '#51e0a1',
+        '--color-primary-active': '#38c48a',
+        '--color-secondary': 'rgba(106, 245, 182, 0.12)',
+        '--color-secondary-hover': 'rgba(106, 245, 182, 0.2)',
+        '--color-secondary-active': 'rgba(106, 245, 182, 0.28)',
+        '--color-border': '#1f232d',
+        '--color-border-bright': '#2e3442',
+        '--color-error': '#ff6b7d',
+        '--color-success': '#6af5b6',
+        '--color-warning': '#f9d76c',
+        '--color-info': '#7fbff6',
+        '--color-focus-ring': 'rgba(106, 245, 182, 0.35)',
+        '--color-btn-primary-text': '#041f1b',
+        '--shadow-outline': '0 0 0 1px rgba(255, 255, 255, 0.035)'
     }
 };
 
@@ -59,6 +57,7 @@ const state = {
     currentPreviewFile: null,
     generatedPrompt: '',
     lastResponse: '',
+    lastXmlChanges: [],
     isStreaming: false,
     // Track which folders are expanded using full folder paths like "root/src"
     expandedFolders: new Set(),
@@ -73,7 +72,8 @@ const state = {
     promptTemplates: {
         'code-review': 'Please review the following code files for:\n- Potential bugs or errors\n- Performance improvements\n- Code quality and best practices\n- Security vulnerabilities\n\nProvide specific suggestions with line numbers where applicable.',
         'feature-implementation': 'Implement the following feature:\n\n{TASK_DESCRIPTION}\n\nRequirements:\n- Follow existing code patterns and conventions\n- Include appropriate error handling\n- Add comments for complex logic\n- Ensure backward compatibility',
-        'bug-fix': 'Fix the following bug:\n\n{TASK_DESCRIPTION}\n\nPlease:\n- Identify the root cause\n- Provide a fix that doesn\'t break existing functionality\n- Add tests if appropriate\n- Explain the solution'
+        'bug-fix': 'Fix the following bug:\n\n{TASK_DESCRIPTION}\n\nPlease:\n- Identify the root cause\n- Provide a fix that doesn\'t break existing functionality\n- Add tests if appropriate\n- Explain the solution',
+        'xml-patch': 'Please analyze the following code files and implement the requested changes.\n\n{TASK_DESCRIPTION}\n\nIMPORTANT: Respond ONLY with XML changes. Prefer the element form with CDATA:\n\n<changes>\n  <file path=\"filename.ext\">\n    <edit>\n      <old><![CDATA[exact old code]]></old>\n      <new><![CDATA[exact new code]]></new>\n    </edit>\n  </file>\n</changes>\n\nIf you cannot safely include raw text use Base64:\n\n<changes>\n  <file path=\"filename.ext\">\n    <edit encoding=\"base64\">\n      <old>BASE64_OLD</old>\n      <new>BASE64_NEW</new>\n    </edit>\n  </file>\n</changes>\n\nRules:\n- Use the EXACT old code snippet from the provided files\n- Provide ONLY the XML response, no surrounding commentary\n- Each <edit> represents one specific change\n- Multiple <edit> tags per file are allowed\n- Do not use Markdown code fences'
     }
 };
 
@@ -189,6 +189,33 @@ function setupEventListeners() {
     document.getElementById('sendPrompt').addEventListener('click', sendPromptToAI);
     document.getElementById('stopGeneration').addEventListener('click', stopGeneration);
     document.getElementById('copyResponse').addEventListener('click', copyResponse);
+    document.getElementById('testXmlResponse').addEventListener('click', testXmlResponse);
+    const toggleManualResponseBtn = document.getElementById('toggleManualResponse');
+    if (toggleManualResponseBtn) {
+        toggleManualResponseBtn.addEventListener('click', () => {
+            const panel = document.getElementById('manualResponsePanel');
+            const shouldShow = !(panel && panel.style.display !== 'none');
+            setManualResponsePanel(shouldShow);
+        });
+    }
+    const applyManualResponseBtn = document.getElementById('applyManualResponse');
+    if (applyManualResponseBtn) {
+        applyManualResponseBtn.addEventListener('click', () => {
+            handleManualResponseApply();
+        });
+    }
+    const cancelManualResponseBtn = document.getElementById('cancelManualResponse');
+    if (cancelManualResponseBtn) {
+        cancelManualResponseBtn.addEventListener('click', () => {
+            setManualResponsePanel(false);
+        });
+    }
+
+    // Apply Changes actions
+    const applyAllBtn = document.getElementById('applyAllChanges');
+    const rejectAllBtn = document.getElementById('rejectAllChanges');
+    if (applyAllBtn) applyAllBtn.addEventListener('click', () => handleApplyAll(false));
+    if (rejectAllBtn) rejectAllBtn.addEventListener('click', handleRejectAll);
     
     // Settings modal
     document.getElementById('closeSettings').addEventListener('click', closeSettingsModal);
@@ -197,9 +224,12 @@ function setupEventListeners() {
     
     // Temperature slider
     const tempSlider = document.getElementById('temperature');
-    tempSlider.addEventListener('input', (e) => {
-        document.getElementById('temperatureValue').textContent = e.target.value;
-    });
+    if (tempSlider) {
+        tempSlider.addEventListener('input', (e) => {
+            const valEl = document.getElementById('temperatureValue');
+            if (valEl) valEl.textContent = e.target.value;
+        });
+    }
     
     // Project management
     document.getElementById('saveProject').addEventListener('click', saveProject);
@@ -1395,28 +1425,684 @@ function displayResponse(content) {
     const responseOutput = document.getElementById('responseOutput');
     responseOutput.textContent = content;
     state.lastResponse = content;
-    
+
     // Check if response contains code changes for apply mode
-    if (content.includes('```') || content.includes('diff')) {
+    if (content.includes('```') || content.includes('diff') || content.includes('<changes>')) {
         showApplySection(content);
     }
 }
 
-// Show apply changes section
+function setManualResponsePanel(shouldShow) {
+    const panel = document.getElementById('manualResponsePanel');
+    const input = document.getElementById('manualResponseInput');
+    if (!panel) return;
+    panel.style.display = shouldShow ? 'block' : 'none';
+    if (shouldShow) {
+        if (input) {
+            requestAnimationFrame(() => {
+                input.focus();
+                input.select();
+            });
+        }
+    } else if (input) {
+        input.value = '';
+    }
+}
+
+function handleManualResponseApply() {
+    const input = document.getElementById('manualResponseInput');
+    if (!input) return;
+    const content = input.value.trim();
+    if (!content) {
+        showError('Paste an AI response to parse');
+        input.focus();
+        return;
+    }
+    setManualResponsePanel(false);
+    displayResponse(content);
+    showSuccess('Response loaded. Review the detected changes below.');
+}
+
+// Robust XML change extraction utilities and parser
+
+// Decode common HTML entities in a string.
+function __pb_unescapeHtmlEntities(str) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = str;
+        return textarea.value;
+    } catch (_) {
+        // Best effort fallback
+        return str
+            .replace(/&lt;/gi, '<')
+            .replace(/&gt;/gi, '>')
+            .replace(/&amp;/gi, '&')
+            .replace(/&quot;/gi, '"')
+            .replace(/&apos;/gi, "'")
+            .replace(/&#39;/gi, "'")
+            .replace(/&#(\d+);/g, (match, code) => {
+                const value = parseInt(code, 10);
+                if (Number.isNaN(value)) return match;
+                const fromCodePoint = String.fromCodePoint || String.fromCharCode;
+                return fromCodePoint(value);
+            })
+            .replace(/&#x([0-9a-f]+);/gi, (match, code) => {
+                const value = parseInt(code, 16);
+                if (Number.isNaN(value)) return match;
+                const fromCodePoint = String.fromCodePoint || String.fromCharCode;
+                return fromCodePoint(value);
+            });
+    }
+}
+
+function __pb_escapeHtml(str) {
+    try {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    } catch (_) {
+        return str;
+    }
+}
+
+// Decode Base64 UTF-8 safely.
+function __pb_decodeBase64Utf8(b64) {
+    try {
+        const binary = atob(b64);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        return new TextDecoder('utf-8').decode(bytes);
+    } catch (e) {
+        console.warn('Base64 decode failed; returning original string');
+        return b64;
+    }
+}
+
+// Try to parse an XML fragment that contains <changes>...</changes>.
+// Returns a Document or null on failure.
+function __pb_tryParseXmlDocument(xmlCandidate) {
+    if (!xmlCandidate || typeof xmlCandidate !== 'string') return null;
+
+    // Trim and normalize zero-width characters
+    let xmlStr = xmlCandidate.trim().replace(/\u200B/g, '');
+
+    // Detect HTML-escaped XML and decode only when needed so attribute entities remain intact.
+    let searchStr = xmlStr;
+    const hasLiteralChanges = /<\s*changes\b/i.test(searchStr);
+    if (!hasLiteralChanges && /&lt;\s*changes\b/i.test(searchStr)) {
+        searchStr = __pb_unescapeHtmlEntities(searchStr);
+    }
+
+    // Keep only the first <changes>...</changes> block if there is extra text around.
+    const match = searchStr.match(/<\s*changes\b[\s\S]*?<\/\s*changes\s*>/i);
+    if (!match) return null;
+
+    let core = match[0];
+
+    // Heuristic: ampersands that are not part of entities make XML invalid.
+    // Protect CDATA blocks while escaping stray '&' elsewhere.
+    const cdataSegments = [];
+    core = core.replace(/<!\[CDATA\[[\s\S]*?]]>/g, (segment) => {
+        const token = `__PB_CDATA_${cdataSegments.length}__`;
+        cdataSegments.push({ token, segment });
+        return token;
+    });
+    core = core.replace(/&(?!amp;|lt;|gt;|quot;|apos;|#\d+;|#x[0-9a-f]+;)/gi, '&amp;');
+    cdataSegments.forEach(({ token, segment }) => {
+        core = core.replace(token, segment);
+    });
+
+    const wrapped = `<root>${core}</root>`;
+    const parser = new DOMParser();
+
+    // Try application/xml first, then text/xml as a fallback.
+    let doc = parser.parseFromString(wrapped, 'application/xml');
+    if (doc.querySelector('parsererror')) {
+        doc = parser.parseFromString(wrapped, 'text/xml');
+        if (doc.querySelector('parsererror')) {
+            return null;
+        }
+    }
+    return doc;
+}
+
+// Extract {path, old_str, new_str} tuples from a parsed XML Document.
+// Supports multiple schemas:
+// 1) <edit old_str="..." new_str="..."/>
+// 2) <edit><old><![CDATA[...]]></old><new><![CDATA[...]]></new></edit>
+// 3) Variants for tag names: <from>/<to>, <search>/<replace>, <old_str>/<new_str>
+// 4) Base64 via encoding="base64" on <edit> or child nodes.
+function __pb_collectChangesFromXmlDoc(xmlDoc) {
+    const changes = [];
+    if (!xmlDoc) return changes;
+
+    const fileNodes = Array.from(xmlDoc.querySelectorAll('file'));
+    // Also allow a flat form with <edit path="...">...</edit>
+    const editNodesWithPath = Array.from(xmlDoc.querySelectorAll('edit[path]'));
+
+    // Helper to extract text from a node, including CDATA
+    function textOf(node) {
+        if (!node) return null;
+        let txt = node.textContent != null ? node.textContent : null;
+        const enc = (node.getAttribute && node.getAttribute('encoding') || '').toLowerCase();
+        if (enc === 'base64' && typeof txt === 'string') {
+            txt = __pb_decodeBase64Utf8(txt.trim());
+        }
+        return txt;
+    }
+
+    function decodeAttr(el, name) {
+        let v = el.getAttribute(name);
+        if (v == null) return null;
+        // Unescape XML entities that models often include
+        if (/[&][a-z#]/i.test(v)) v = __pb_unescapeHtmlEntities(v);
+        const enc = (el.getAttribute('encoding') || '').toLowerCase();
+        if (enc === 'base64') {
+            v = __pb_decodeBase64Utf8(v);
+        }
+        return v;
+    }
+
+    function extractEdits(parentEl, path) {
+        const edits = parentEl.querySelectorAll('edit, replace');
+        edits.forEach(editEl => {
+            let oldStr = decodeAttr(editEl, 'old_str');
+            let newStr = decodeAttr(editEl, 'new_str');
+
+            // Attribute fallbacks
+            if (oldStr == null) oldStr = decodeAttr(editEl, 'old');
+            if (newStr == null) newStr = decodeAttr(editEl, 'new');
+            if (oldStr == null) oldStr = decodeAttr(editEl, 'from');
+            if (newStr == null) newStr = decodeAttr(editEl, 'to');
+            if (oldStr == null) oldStr = decodeAttr(editEl, 'search');
+            if (newStr == null) newStr = decodeAttr(editEl, 'replace');
+
+            // Child element forms
+            if (oldStr == null || newStr == null) {
+                const oldNode = editEl.querySelector('old, old_str, from, search');
+                const newNode = editEl.querySelector('new, new_str, to, replace');
+                if (oldNode && newNode) {
+                    oldStr = textOf(oldNode);
+                    newStr = textOf(newNode);
+                }
+            }
+
+            if (typeof oldStr === 'string' && typeof newStr === 'string') {
+                changes.push({ path, old_str: oldStr, new_str: newStr });
+            }
+        });
+    }
+
+    // Structured form: <file path="..."><edit .../></file>
+    fileNodes.forEach(fileEl => {
+        let path = fileEl.getAttribute('path') || '';
+        if (!path) {
+            const pathNode = fileEl.querySelector('path');
+            if (pathNode) path = pathNode.textContent.trim();
+        }
+        if (!path) return;
+        extractEdits(fileEl, path);
+    });
+
+    // Flat form: <edit path="...">...</edit>
+    editNodesWithPath.forEach(editEl => {
+        const path = editEl.getAttribute('path');
+        if (!path) return;
+        // Reuse the same extraction but constrained to this node
+        const container = document.createElement('div');
+        container.appendChild(editEl.cloneNode(true));
+        extractEdits(container, path);
+    });
+
+    return changes;
+}
+
+// Parse XML changes from response (robust, tolerant to code fences and HTML-escaped XML)
+function parseXmlChanges(response) {
+    // Collect likely XML blocks from the response
+    const candidates = [];
+    if (typeof response !== 'string' || !response.trim()) return [];
+
+    // 1) Code-fenced blocks like ```xml ... ```
+    const fenceRe = /```[ \t]*([\w-]*)[ \t]*\n([\s\S]*?)```/g;
+    let m;
+    while ((m = fenceRe.exec(response)) !== null) {
+        const lang = (m[1] || '').toLowerCase();
+        const body = m[2] || '';
+        if (/<\s*changes\b/i.test(body) || lang === 'xml' || lang === 'changes') {
+            candidates.push(body);
+        }
+        // HTML-escaped within a fence
+        if (body.includes('<changes')) {
+            candidates.push(body);
+        }
+    }
+
+    // 2) Raw inline <changes>...</changes> blocks
+    const rawRe = /<\s*changes\b[\s\S]*?<\/\s*changes\s*>/gi;
+    const rawMatches = response.match(rawRe);
+    if (rawMatches) {
+        candidates.push(...rawMatches);
+    }
+
+    // 3) De-duplicated candidates
+    const seen = new Set();
+    const uniqueCandidates = candidates
+        .map(c => c.trim())
+        .filter(c => {
+            if (!c) return false;
+            const k = c.slice(0, 200);
+            if (seen.has(k)) return false;
+            seen.add(k);
+            return true;
+        });
+
+    // Try parsing each candidate until one works
+    for (const candidate of uniqueCandidates) {
+        const doc = __pb_tryParseXmlDocument(candidate);
+        if (!doc) continue;
+        const extracted = __pb_collectChangesFromXmlDoc(doc);
+        if (extracted && extracted.length) {
+            return extracted;
+        }
+    }
+
+    // If we reach here, parsing failed
+    console.warn('No valid <changes> block could be parsed.');
+    showError('Could not read XML changes. Please return one of these formats:\n\n' +
+        '<changes> with <file path="..."><edit old_str="..." new_str="..."/></file>\n' +
+        'or\n' +
+        '<changes> with <file path="..."><edit><old><![CDATA[...]]></old><new><![CDATA[...]]></new></edit></file>\n' +
+        'You may also set encoding="base64" on <edit> or its children.');
+    return [];
+}
+
+// Show XML patch section
+function showXmlPatchSection(changes) {
+    const applySection = document.getElementById('applySection');
+    const changesPreview = document.getElementById('changesPreview');
+
+    // Keep latest changes available for Apply All
+    state.lastXmlChanges = Array.isArray(changes) ? changes : [];
+
+    // Build patch and surface any errors
+    const { patch, errors } = generatePatchContent(changes);
+    const initialStrip = 0;
+    const patchCommand = generateGitPatchCommands(changes, initialStrip);
+
+    const errorBlock = errors && errors.length
+        ? `
+        <div style="margin-top:10px; padding:8px; background: var(--color-secondary); border-radius: 4px;">
+            <strong>${errors.length} issue(s) detected:</strong>
+            <ul style="margin-top:6px;">
+                ${errors.map(e => `<li><code>${e.path || 'unknown'}</code>: ${e.reason}</li>`).join('')}
+            </ul>
+            <small class="text-secondary">These entries were skipped in the patch.</small>
+        </div>`
+        : '';
+
+    changesPreview.innerHTML = `
+        <h5>Detected ${changes.length} XML change(s)</h5>
+        ${changes.map((change) => `
+            <div class="change-item" style="margin-bottom: 12px; padding: 8px; background: var(--color-secondary); border-radius: 4px;">
+                <strong>File: ${change.path}</strong>
+                <div style="margin-top: 8px;">
+                    <div style="color: var(--color-error); font-size: 11px;">- ${__pb_escapeHtml(change.old_str.substring(0, 80))}${change.old_str.length > 80 ? '...' : ''}</div>
+                    <div style="color: var(--color-success); font-size: 11px;">+ ${__pb_escapeHtml(change.new_str.substring(0, 80))}${change.new_str.length > 80 ? '...' : ''}</div>
+                </div>
+            </div>
+        `).join('')}
+        ${errorBlock}
+        <div style="margin-top: 16px; padding: 12px; background: var(--color-surface); border-radius: 4px;">
+            <div style="display:flex; align-items:center; gap:8px; justify-content:space-between; flex-wrap: wrap;">
+                <h6 style="margin:0;">Git Patch Command</h6>
+                <label style="font-size:12px;">strip prefix:
+                    <select id="patchStripLevel" class="form-control" style="display:inline-block; width:auto;">
+                        <option value="0" selected>p0 (repo root)</option>
+                        <option value="1">p1 (inside repo folder)</option>
+                    </select>
+                </label>
+            </div>
+            <pre id="patchCommand" style="font-size: 12px; background: var(--color-secondary); padding: 8px; border-radius: 4px; margin: 8px 0; white-space: pre-wrap;">${patchCommand}</pre>
+            <div style="margin-top:6px;">
+                <button id="copyPatchCommand" class="btn btn--primary btn--sm" style="margin-right: 8px;">📋 Copy Command</button>
+                <button id="downloadPatch" class="btn btn--secondary btn--sm" style="margin-right: 8px;">📥 Download Patch</button>
+                <button id="applyPatchCommand" class="btn btn--secondary btn--sm">⚡ Apply Changes</button>
+            </div>
+            <small class="text-secondary">Tip: run from your repo root with <code>-p0</code>. If you are inside a subfolder, choose <code>-p1</code>.</small>
+        </div>
+    `;
+
+    applySection.style.display = 'block';
+
+    // Button handlers
+    const stripSel = document.getElementById('patchStripLevel');
+    const patchPre = document.getElementById('patchCommand');
+
+    stripSel.addEventListener('change', () => {
+        const cmd = generateGitPatchCommands(changes, parseInt(stripSel.value, 10) || 0);
+        patchPre.textContent = cmd;
+    });
+
+    document.getElementById('copyPatchCommand').addEventListener('click', () => {
+        const command = patchPre.textContent;
+        navigator.clipboard.writeText(command).then(() => {
+            showSuccess('Patch command copied to clipboard');
+        }).catch(err => {
+            console.error('Failed to copy command:', err);
+            showError('Failed to copy command');
+        });
+    });
+
+    document.getElementById('downloadPatch').addEventListener('click', () => {
+        const blob = new Blob([patch], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'changes.patch';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showSuccess('Patch file downloaded');
+    });
+
+    document.getElementById('applyPatchCommand').addEventListener('click', async () => {
+        // Apply to in-memory files and to disk where permitted
+        await handleApplyAll(true);
+    });
+}
+
+// Generate diff hunk for a change (returns { hunk, startLine, matchIndex, matchLength })
+
+function generateDiff(change, fileContent, startOffset = 0) {
+    if (!change || typeof change.old_str !== 'string' || typeof change.new_str !== 'string') {
+        return null;
+    }
+
+    const stripCarriage = (line) => line.replace(/\r/g, '');
+    const toDiffLines = (text) => {
+        if (!text) return [];
+        const parts = text.replace(/\r/g, '').split('\n');
+        if (parts.length && parts[parts.length - 1] === '') {
+            parts.pop(); // drop trailing empty from newline terminator
+        }
+        return parts.map(stripCarriage);
+    };
+
+    const normalizedFileContent = fileContent;
+    const matchStart = Math.max(0, startOffset || 0);
+    let matchIndex = normalizedFileContent.indexOf(change.old_str, matchStart);
+    if (matchIndex === -1 && matchStart > 0) {
+        // Fallback to search from start if sequential search misses (e.g., out-of-order edits)
+        matchIndex = normalizedFileContent.indexOf(change.old_str);
+    }
+    if (matchIndex === -1) {
+        console.error('Could not find old_str in file:', change.path);
+        return null;
+    }
+    const usedFallback = matchStart > 0 && matchIndex < matchStart;
+
+    const beforeContent = fileContent.slice(0, matchIndex);
+    let startLine = beforeContent.split('\n').length - 1;
+    if (startLine < 0) startLine = 0;
+    const fileLines = fileContent.replace(/\r/g, '').split('\n');
+
+    const oldLines = toDiffLines(change.old_str);
+    const newLines = toDiffLines(change.new_str);
+    const oldCount = oldLines.length;
+    const newCount = newLines.length;
+    const endLine = oldCount > 0 ? startLine + oldCount - 1 : startLine - 1;
+
+    const beforeContext = fileLines.slice(Math.max(0, startLine - 3), startLine);
+    const afterContext = fileLines.slice(endLine + 1, endLine + 1 + 3);
+
+    const hunkStart = startLine + 1; // 1-based for diff header
+    let hunk = `@@ -${hunkStart},${oldCount} +${hunkStart},${newCount} @@\n`;
+
+    if (beforeContext.length) {
+        hunk += beforeContext.map(line => ' ' + line).join('\n') + '\n';
+    }
+    if (oldCount) {
+        hunk += oldLines.map(line => '-' + line).join('\n') + '\n';
+    }
+    if (newCount) {
+        hunk += newLines.map(line => '+' + line).join('\n') + '\n';
+    }
+    if (afterContext.length) {
+        hunk += afterContext.map(line => ' ' + line).join('\n') + '\n';
+    }
+    if (!hunk.endsWith('\n')) hunk += '\n';
+    const matchLength = change.old_str.length || 0;
+    return { hunk, startLine, matchIndex, matchLength, usedFallback };
+}
+
+// Generate git patch commands from changes
+// Generate patch content from changes
+function generatePatchContent(changes) {
+    // Group changes by file
+    const grouped = {};
+    changes.forEach(change => {
+        if (!grouped[change.path]) grouped[change.path] = [];
+        grouped[change.path].push(change);
+    });
+
+    let patchContent = '';
+    const errors = [];
+
+    Object.entries(grouped).forEach(([path, fileChanges]) => {
+        const file = state.files.find(f => f.path === path);
+        if (!file) {
+            console.error('File not found:', path);
+            errors.push({ path, reason: 'File not loaded' });
+            return;
+        }
+        const original = file.content;
+
+        // Build hunks
+        const diffs = [];
+        let searchOffset = 0; // track char offset to disambiguate repeated snippets
+        fileChanges.forEach(change => {
+            const res = generateDiff(change, original, searchOffset);
+            if (res && res.hunk) {
+                diffs.push({ ...res, change });
+                if (typeof res.matchIndex === 'number' && typeof res.matchLength === 'number') {
+                    const nextOffset = res.matchIndex + res.matchLength;
+                    if (res.usedFallback) {
+                        searchOffset = nextOffset;
+                    } else if (nextOffset > searchOffset) {
+                        searchOffset = nextOffset;
+                    }
+                }
+            } else {
+                errors.push({ path, reason: 'old_str not found', change });
+            }
+        });
+
+        if (diffs.length === 0) {
+            return; // no hunks for this file
+        }
+
+        // Sort hunks by position for readability
+        diffs.sort((a, b) => a.startLine - b.startLine);
+
+        // Compute hashes for the index line (informational, not verified by git apply)
+        let newContentForHash = original;
+        diffs.forEach(d => {
+            newContentForHash = newContentForHash.replace(d.change.old_str, d.change.new_str);
+        });
+
+        const oldHash = computeShortHash(original);
+        const newHash = computeShortHash(newContentForHash);
+
+        // File header
+        patchContent += `diff --git a/${path} b/${path}\n`;
+        patchContent += `index ${oldHash}..${newHash} 100644\n`;
+        patchContent += `--- a/${path}\n`;
+        patchContent += `+++ b/${path}\n`;
+
+        // Hunks
+        diffs.forEach(d => {
+            patchContent += d.hunk;
+        });
+
+        // Blank line between files
+        patchContent += '\n';
+    });
+
+    // Ensure single trailing newline
+    patchContent = patchContent.replace(/\s+$/, '') + '\n';
+
+    return { patch: patchContent, errors };
+}
+// Generate git patch commands from changes
+function generateGitPatchCommands(changes, stripLevel = 0) {
+    const { patch } = generatePatchContent(changes);
+    const level = Number.isInteger(stripLevel) ? stripLevel : 0;
+    const command = `git apply --index -p${level} <<'PATCH'\n${patch}\nPATCH`;
+    return command;
+}
+
+// Helpers for patching and applying edits in-app and optionally to live-linked files
+function computeShortHash(input) {
+    // Fast non-crypto short hex hash for index line cosmetics
+    let h1 = 0x811c9dc5, h2 = 0x1b873593;
+    for (let i = 0; i < input.length; i++) {
+        const c = input.charCodeAt(i);
+        h1 = Math.imul(h1 ^ c, 2654435761);
+        h2 = Math.imul(h2 ^ c, 1597334677);
+    }
+    const n = (h1 ^ h2) >>> 0;
+    return n.toString(16).padStart(7, '0').slice(-7);
+}
+
+async function applyChangesToStateFiles(changes, { writeToDisk = false } = {}) {
+    const summary = { total: changes.length, applied: 0, skipped: [], writtenToDisk: 0, modifiedFiles: new Set() };
+
+    for (const change of changes) {
+        const file = state.files.find(f => f.path === change.path);
+        if (!file) {
+            summary.skipped.push({ path: change.path, reason: 'File not loaded' });
+            continue;
+        }
+        const idx = file.content.indexOf(change.old_str);
+        if (idx === -1) {
+            summary.skipped.push({ path: change.path, reason: 'old_str not found' });
+            continue;
+        }
+        // Replace first occurrence only
+        file.content = file.content.replace(change.old_str, change.new_str);
+        summary.applied += 1;
+        summary.modifiedFiles.add(file);
+
+        if (writeToDisk && file.canLiveRefresh && file.fileHandle && file.fileHandle.createWritable) {
+            try {
+                // Request write permission if needed
+                let perm = 'granted';
+                try {
+                    const q = await file.fileHandle.queryPermission({ mode: 'readwrite' });
+                    if (q !== 'granted') {
+                        perm = await file.fileHandle.requestPermission({ mode: 'readwrite' });
+                    }
+                } catch (_) { /* continue best-effort */ }
+                if (perm === 'granted') {
+                    const writable = await file.fileHandle.createWritable();
+                    await writable.write(file.content);
+                    await writable.close();
+                    summary.writtenToDisk += 1;
+                } else {
+                    summary.skipped.push({ path: change.path, reason: 'Write permission denied' });
+                }
+            } catch (err) {
+                console.warn('Failed to write file:', change.path, err);
+                summary.skipped.push({ path: change.path, reason: 'Write failed' });
+            }
+        }
+    }
+
+    // Update UI counters
+    updateFileTree();
+    updateFilePreview();
+    updateTokenEstimates();
+
+    return summary;
+}
+
+async function handleApplyAll(writeToDisk) {
+    const changes = state.lastXmlChanges && state.lastXmlChanges.length
+        ? state.lastXmlChanges
+        : parseXmlChanges(state.lastResponse);
+
+    if (!changes || changes.length === 0) {
+        showError('No XML changes detected to apply');
+        return;
+    }
+
+    const result = await applyChangesToStateFiles(changes, { writeToDisk });
+    const applySection = document.getElementById('applySection');
+    const changesPreview = document.getElementById('changesPreview');
+
+    const skippedList = result.skipped.map(s => `<li><code>${s.path}</code>: ${s.reason}</li>`).join('');
+    const summaryHtml = `
+        <div id="applyResult" style="margin-top: 12px; padding: 10px; background: var(--color-surface); border-radius: 4px;">
+            <strong>Applied ${result.applied} of ${result.total} change(s).</strong>
+            ${writeToDisk ? `<div>Wrote ${result.writtenToDisk} file(s) to disk where permitted.</div>` : ''}
+            ${result.skipped.length ? `<details style="margin-top:8px;"><summary>${result.skipped.length} skipped</summary><ul style="margin-top:6px;">${skippedList}</ul></details>` : ''}
+        </div>
+    `;
+
+    // Append or replace the result block
+    const existing = document.getElementById('applyResult');
+    if (existing) {
+        existing.outerHTML = summaryHtml;
+    } else {
+        changesPreview.insertAdjacentHTML('beforeend', summaryHtml);
+    }
+
+    if (result.applied > 0 && result.skipped.length === 0) {
+        showSuccess('All changes applied');
+    } else if (result.applied > 0) {
+        showSuccess(`Applied ${result.applied} change(s) with some skips`);
+    } else {
+        showError('No changes were applied. See details.');
+    }
+
+    applySection.style.display = 'block';
+}
+
+function handleRejectAll() {
+    const applySection = document.getElementById('applySection');
+    const changesPreview = document.getElementById('changesPreview');
+    changesPreview.innerHTML = '<p class="text-secondary">Changes dismissed.</p>';
+    applySection.style.display = 'none';
+    state.lastXmlChanges = [];
+}
+
+// Show apply changes section (keeps behavior for non-XML code fences)
 function showApplySection(response) {
     const applySection = document.getElementById('applySection');
     const changesPreview = document.getElementById('changesPreview');
-    
+
+    // Check for XML changes first
+    const xmlChanges = parseXmlChanges(response);
+    if (xmlChanges.length > 0) {
+        showXmlPatchSection(xmlChanges);
+        return;
+    }
+
     // Extract code blocks or diffs
     const codeBlocks = response.match(/```[\s\S]*?```/g) || [];
-    
+
     if (codeBlocks.length > 0) {
         changesPreview.innerHTML = `
             <h5>Detected ${codeBlocks.length} code change(s):</h5>
             ${codeBlocks.map((block, index) => `
                 <div class="change-item" style="margin-bottom: 12px; padding: 8px; background: var(--color-secondary); border-radius: 4px;">
                     <strong>Change ${index + 1}:</strong>
-                    <pre style="font-size: 11px; margin: 8px 0 0 0;">${block}</pre>
+                    <pre style="font-size: 11px; margin: 8px 0 0 0;">${__pb_escapeHtml(block)}</pre>
                 </div>
             `).join('')}
         `;
@@ -1435,6 +2121,12 @@ function updateStreamingUI(isStreaming) {
     document.getElementById('sendPrompt').style.display = isStreaming ? 'none' : 'inline-flex';
     document.getElementById('stopGeneration').style.display = isStreaming ? 'inline-flex' : 'none';
     document.getElementById('loadingIndicator').style.display = isStreaming ? 'flex' : 'none';
+}
+
+// Test XML response
+function testXmlResponse() {
+    const currentResponse = document.getElementById('responseOutput').textContent;
+    displayResponse(currentResponse);
 }
 
 // Copy response to clipboard
@@ -1698,7 +2390,7 @@ function generateId() {
 }
 
 function showError(message) {
-    console.error(message);
+    console.error('Custom error:', message);
     // You could implement a toast notification system here
     alert(message);
 }

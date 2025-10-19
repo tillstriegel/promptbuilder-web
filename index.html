@@ -6,38 +6,52 @@
     <title>PromptBuilder Web - OpenRouter AI Assistant</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <!-- Top Navigation -->
-    <nav class="nav-bar">
-        <div class="nav-left">
-            <h1 class="nav-title">PromptBuilder Web</h1>
-            <div class="nav-controls">
-                <div class="custom-dropdown" id="modelDropdown">
-                    <div class="dropdown-trigger">
-                        <input type="text" id="modelSearch" class="form-control nav-select" placeholder="Search models..." readonly>
-                        <span class="dropdown-arrow">▼</span>
-                    </div>
-                    <div class="dropdown-menu" id="modelMenu">
-                        <!-- Models will be populated here -->
+<body class="ascii-theme">
+    <div class="app-terminal">
+        <!-- Top Navigation -->
+        <nav class="nav-bar ascii-frame" data-frame-title="PROMPTBUILDER">
+            <div class="nav-banner" aria-hidden="true">
+<pre class="logo-art">
+PPPP  RRRR   OOO  M   M PPPP  TTTTT BBBB  U   U  III  L     DDDD  EEEEE RRRR
+P   P R   R O   O MM MM P   P   T   B   B U   U   I   L     D   D E     R   R
+P   P R   R O   O M M M P   P   T   B   B U   U   I   L     D   D E     R   R
+PPPP  RRRR  O   O M   M PPPP    T   BBBB  U   U   I   L     D   D EEE   RRRR
+P     R R   O   O M   M P       T   B   B U   U   I   L     D   D E     R R
+P     R  R  O   O M   M P       T   B   B U   U   I   L     D   D E     R  R
+P     R   R  OOO  M   M P       T   BBBB   UUU   III  LLLLL DDDD  EEEEE R   R
+</pre>
+            </div>
+            <div class="nav-shell">
+                <div class="nav-left">
+                    <h1 class="nav-title">PromptBuilder Web</h1>
+                    <div class="nav-controls">
+                        <div class="custom-dropdown" id="modelDropdown">
+                            <div class="dropdown-trigger">
+                                <input type="text" id="modelSearch" class="form-control nav-select" placeholder="Search models..." readonly>
+                                <span class="dropdown-arrow">▼</span>
+                            </div>
+                            <div class="dropdown-menu" id="modelMenu">
+                                <!-- Models will be populated here -->
+                            </div>
+                        </div>
+                        <button id="refreshModels" class="btn btn--secondary nav-btn">🔄</button>
                     </div>
                 </div>
-                <button id="refreshModels" class="btn btn--secondary nav-btn">🔄</button>
+                <div class="nav-right">
+                <button id="themeToggle" class="btn btn--secondary nav-btn" title="Toggle theme">☀️</button>
+                <button id="settingsBtn" class="btn btn--secondary nav-btn">⚙️ Settings</button>
+                <div class="token-display">
+                    <span id="tokenCount">Tokens: 0</span>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class="nav-right">
-        <button id="themeToggle" class="btn btn--secondary nav-btn" title="Toggle theme">☀️</button>
-        <button id="settingsBtn" class="btn btn--secondary nav-btn">⚙️ Settings</button>
-        <div class="token-display">
-            <span id="tokenCount">Tokens: 0</span>
-            </div>
-        </div>
-    </nav>
+        </nav>
 
-    <!-- Main Layout -->
-    <div class="main-layout">
+        <!-- Main Layout -->
+        <div class="main-layout ascii-grid">
         <!-- Left Sidebar - File Tree -->
-        <aside class="sidebar sidebar--left">
-            <div class="sidebar-header">
+        <aside class="sidebar sidebar--left ascii-panel" data-frame-title="FILES">
+            <div class="sidebar-header ascii-divider">
                 <h3>Files</h3>
                 <div class="file-controls">
                     <button id="selectAllFiles" class="btn btn--sm btn--secondary">Select All</button>
@@ -46,7 +60,7 @@
             </div>
             
             <!-- File Upload Zone -->
-            <div class="file-upload-zone" id="fileUploadZone">
+            <div class="file-upload-zone ascii-subpanel" id="fileUploadZone">
                 <div class="upload-content">
                     <div class="upload-icon">📁</div>
                     <p>Drop files or folders here</p>
@@ -60,10 +74,10 @@
             </div>
 
             <!-- File Tree -->
-            <div class="file-tree" id="fileTree"></div>
+            <div class="file-tree ascii-subpanel" id="fileTree"></div>
 
             <!-- Context Builder -->
-            <div class="context-builder">
+            <div class="context-builder ascii-subpanel">
                 <h4>AI Context Builder</h4>
                 <textarea id="taskDescription" class="form-control" placeholder="Describe your task to get AI-suggested relevant files..."></textarea>
                 <button id="suggestFiles" class="btn btn--primary btn--sm btn--full-width">🤖 Suggest Files</button>
@@ -71,16 +85,16 @@
         </aside>
 
         <!-- Center Panel - Content Preview & Prompt -->
-        <main class="main-content">
-            <div class="content-tabs">
+        <main class="main-content ascii-panel" data-frame-title="PROMPT LAB">
+            <div class="content-tabs ascii-divider">
                 <button class="tab-btn active" data-tab="preview">File Preview</button>
                 <button class="tab-btn" data-tab="prompt">Generated Prompt</button>
                 <button class="tab-btn" data-tab="response">AI Response</button>
             </div>
 
             <!-- File Preview Tab -->
-            <div class="tab-content active" id="previewTab">
-                <div class="file-preview">
+            <div class="tab-content active ascii-subpanel" id="previewTab">
+                <div class="file-preview ascii-subpanel">
                     <div class="preview-header">
                         <span id="previewFileName">Select a file to preview</span>
                         <div class="preview-controls">
@@ -100,9 +114,9 @@
             </div>
 
             <!-- Generated Prompt Tab -->
-            <div class="tab-content" id="promptTab">
-                <div class="prompt-composer">
-                    <div class="prompt-header">
+            <div class="tab-content ascii-subpanel" id="promptTab">
+                <div class="prompt-composer ascii-subpanel">
+                    <div class="prompt-header ascii-divider">
                         <h3>Generated Prompt</h3>
                         <div class="prompt-controls">
                             <select id="promptTemplate" class="form-control">
@@ -110,37 +124,47 @@
                                 <option value="code-review">Code Review</option>
                                 <option value="feature-implementation">Feature Implementation</option>
                                 <option value="bug-fix">Bug Fix</option>
+                                <option value="xml-patch">XML Patch Changes</option>
                             </select>
                             <button id="generatePrompt" class="btn btn--primary">Generate Prompt</button>
                             <button id="copyPrompt" class="btn btn--secondary">📋 Copy</button>
                         </div>
                     </div>
-                    <textarea id="taskInput" class="form-control task-input" placeholder="Describe what you want the AI to do with the selected files..."></textarea>
-                    <pre id="generatedPrompt" class="generated-prompt">Select files and describe your task to generate a prompt...</pre>
+                    <textarea id="taskInput" class="form-control task-input ascii-subpanel" placeholder="Describe what you want the AI to do with the selected files..."></textarea>
+                    <pre id="generatedPrompt" class="generated-prompt ascii-subpanel">Select files and describe your task to generate a prompt...</pre>
                 </div>
             </div>
 
             <!-- AI Response Tab -->
-            <div class="tab-content" id="responseTab">
-                <div class="response-container">
-                    <div class="response-header">
+            <div class="tab-content ascii-subpanel" id="responseTab">
+                <div class="response-container ascii-subpanel">
+                    <div class="response-header ascii-divider">
                         <h3>AI Response</h3>
                         <div class="response-controls">
                             <button id="sendPrompt" class="btn btn--primary">🚀 Send to AI</button>
                             <button id="stopGeneration" class="btn btn--secondary" style="display: none;">⏹️ Stop</button>
                             <button id="copyResponse" class="btn btn--secondary">📋 Copy Response</button>
+                            <button id="testXmlResponse" class="btn btn--secondary" style="margin-left: 8px;">🧪 Test XML</button>
+                            <button id="toggleManualResponse" class="btn btn--secondary" style="margin-left: 8px;">📥 Paste Response</button>
                         </div>
                     </div>
-                    <div class="response-content">
+                    <div class="response-content ascii-subpanel">
+                        <div id="manualResponsePanel" class="manual-response-panel ascii-subpanel" style="display: none;">
+                            <textarea id="manualResponseInput" class="form-control manual-response-input" placeholder="Paste an AI response here to parse and apply XML changes..."></textarea>
+                            <div class="manual-response-actions">
+                                <button id="applyManualResponse" class="btn btn--primary btn--sm">Parse Response</button>
+                                <button id="cancelManualResponse" class="btn btn--secondary btn--sm">Cancel</button>
+                            </div>
+                        </div>
                         <div id="responseOutput" class="response-output">Click "Send to AI" to get a response...</div>
-                        <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+                        <div id="loadingIndicator" class="loading-indicator ascii-subpanel" style="display: none;">
                             <div class="loading-spinner"></div>
                             <span>Generating response...</span>
                         </div>
                     </div>
                     
                     <!-- Apply Changes Section -->
-                    <div id="applySection" class="apply-section" style="display: none;">
+                    <div id="applySection" class="apply-section ascii-subpanel" style="display: none;">
                         <h4>Apply Changes</h4>
                         <div id="changesPreview" class="changes-preview"></div>
                         <div class="apply-controls">
@@ -153,17 +177,17 @@
         </main>
 
         <!-- Right Sidebar - Model Info & Settings -->
-        <aside class="sidebar sidebar--right">
-            <div class="sidebar-section">
-                <h3>Model Information</h3>
-                <div id="modelInfo" class="model-info">
+        <aside class="sidebar sidebar--right ascii-panel" data-frame-title="INSIGHTS">
+            <div class="sidebar-section ascii-subpanel">
+                <h3 class="ascii-divider">Model Information</h3>
+                <div id="modelInfo" class="model-info ascii-subpanel">
                     <p class="text-secondary">Select a model to view details</p>
                 </div>
             </div>
 
-            <div class="sidebar-section">
-                <h3>Token Usage</h3>
-                <div class="token-breakdown">
+            <div class="sidebar-section ascii-subpanel">
+                <h3 class="ascii-divider">Token Usage</h3>
+                <div class="token-breakdown ascii-subpanel">
                     <div class="token-item">
                         <span>Selected Files:</span>
                         <span id="fileTokens">0</span>
@@ -183,18 +207,18 @@
                 </div>
             </div>
 
-            <div class="sidebar-section">
-                <h3>Project</h3>
-                <div class="project-controls">
+            <div class="sidebar-section ascii-subpanel">
+                <h3 class="ascii-divider">Project</h3>
+                <div class="project-controls ascii-subpanel">
                     <button id="saveProject" class="btn btn--secondary btn--full-width">💾 Save Project</button>
                     <button id="loadProject" class="btn btn--secondary btn--full-width">📂 Load Project</button>
                     <button id="exportPrompt" class="btn btn--secondary btn--full-width">📤 Export Prompt</button>
                 </div>
             </div>
 
-            <div class="sidebar-section">
-                <h3>Shortcuts</h3>
-                <div class="shortcuts-list">
+            <div class="sidebar-section ascii-subpanel">
+                <h3 class="ascii-divider">Shortcuts</h3>
+                <div class="shortcuts-list ascii-subpanel">
                     <div class="shortcut-item"><kbd>Ctrl+O</kbd> Open files</div>
                     <div class="shortcut-item"><kbd>Ctrl+S</kbd> Save project</div>
                     <div class="shortcut-item"><kbd>Ctrl+Enter</kbd> Send prompt</div>
@@ -205,14 +229,16 @@
         </aside>
     </div>
 
+    </div>
+
     <!-- Settings Modal -->
     <div id="settingsModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content ascii-panel" data-frame-title="SETTINGS">
+            <div class="modal-header ascii-divider">
                 <h2>Settings</h2>
                 <button class="modal-close" id="closeSettings">×</button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body ascii-subpanel">
                 <div class="form-group">
                     <label class="form-label" for="apiKey">OpenRouter API Key</label>
                     <input type="password" id="apiKey" class="form-control" placeholder="Enter your OpenRouter API key">
@@ -236,7 +262,7 @@
                     </label>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer ascii-divider">
                 <button id="saveSettings" class="btn btn--primary">Save Settings</button>
                 <button id="cancelSettings" class="btn btn--secondary">Cancel</button>
             </div>
